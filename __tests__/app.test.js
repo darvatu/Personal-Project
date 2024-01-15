@@ -13,7 +13,7 @@ afterAll(()=>{
 })
 
 describe(" test BD for requests", () => {
-  it.only ("if returns an array of topic objects with 2 keys of description and slug when called with GET /api/topics", () => {
+  xit ("if returns an array of topic objects with 2 keys of description and slug when called with GET /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .then((response) => {
