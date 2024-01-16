@@ -18,5 +18,20 @@
         .then((endpoints) => {
             return JSON.parse(endpoints)
             })
-        .catch((err) => Promise.reject({msg: "error reading the endpoints.json file"}))     
+        
+    }
+
+    exports.fetchArticleById = (article_id) => {
+        return db
+            .query( `SELECT * FROM articles WHERE article_id = $1`, [article_id])
+            .then((results) => {
+                if (results.rows.length === 0) {
+                    return Promise.reject({
+                        status: 404,
+                        msg: "requested article not available",
+                    });
+                } else {
+                    return results.rows[0];
+                }
+            })
     }

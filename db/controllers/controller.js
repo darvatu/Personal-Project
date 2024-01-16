@@ -1,9 +1,8 @@
-const { fetchAllTopics, fetchAllEndpoints} = require("../model/model.js");
+const { fetchAllTopics, fetchAllEndpoints, fetchArticleById } = require("../model/model.js");
 
 exports.getAllTopics=(req, res, next) =>{
     fetchAllTopics()
     .then ((topics)=>{
-
         res.status(200).send(topics)
     })
     .catch((err)=>{
@@ -21,3 +20,13 @@ exports.getDescriptionAllEndpoints=(req, res, next) =>{
     })
 }
 
+exports.getArticleById = (req, res, next) => {
+	const { article_id } = req.params;
+	fetchArticleById(article_id)
+		.then((article) => {
+			res.status(200).send({ article })
+		})
+		.catch((err) => {
+			next(err)
+		})
+}
