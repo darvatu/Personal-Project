@@ -1,5 +1,8 @@
 const express = require("express");
-const  {getAllTopics, getDescriptionAllEndpoints, getArticleById} = require("./controllers/controller");
+const  {getAllTopics, 
+        getDescriptionAllEndpoints, 
+        getArticleById, 
+        getAllArticles} = require("./controllers/controller");
 const { handleCustomErrors, 
         handleNoApiError,
         handleBadRequestError, 
@@ -10,8 +13,9 @@ const app = express();
 
 
 app.get("/api/topics", getAllTopics); 
-app.get("/api", getDescriptionAllEndpoints)
+app.get("/api", getDescriptionAllEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
+app.get("/api/articles", getAllArticles);
 
 app.use(handleCustomErrors)
 app.all("/*", handleNoApiError)

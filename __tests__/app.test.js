@@ -69,7 +69,7 @@ describe(" test BD for requests", () => {
             })
     })
 
-    it("400, error for no article id", () => {
+    it("400 error for no article id", () => {
         return request(app)
           .get("/api/articles/bla")
           .expect(400)
@@ -78,7 +78,7 @@ describe(" test BD for requests", () => {
             })
       })
 
-    it("404, error message when passed valid article_id but not found", () => {
+    it("404 error message when passed valid article_id but not found", () => {
         return request(app)
           .get("/api/articles/111")
           .expect(404)
@@ -86,4 +86,67 @@ describe(" test BD for requests", () => {
                 expect(body.msg).toBe("requested article not available")
             })
     })
+    // 5-get-api-all-articles
+    it("GET/api/articles/: will receive 200 and an array of article objects with the defined properties", () => {
+        return request(app)
+            .get("/api/articles/")
+            .expect(200)
+            .then((response) => {
+                const { articles } = response.body;
+                articles.forEach((article) => {
+                    expect(article).toHaveProperty("author");
+                    expect(article).toHaveProperty("title",);
+                    expect(article).toHaveProperty("article_id");
+                    expect(article).toHaveProperty("topic");
+                    expect(article).toHaveProperty("created_at");
+                    expect(article).toHaveProperty("votes");
+                    expect(article).toHaveProperty("article_img_url");
+                })
+            })
+    })
+  
+    it("GET/api/articles/: will receive 200 and should include the comment count ", () => {
+        return request(app)
+            .get("/api/articles/")
+            .expect(200)
+            .then((response) => {
+                const { articles } = response.body;
+                articles.forEach((article) => {
+                    expect(article).toHaveProperty("comment_count");
+                    if (article.article_id === 1) {expect(article.comment_count).toBe("11")}
+                    if (article.article_id === 9) {expect(article.comment_count).toBe("2")}
+                    })
+            })
+    })
+
+    it("GET/api/articles/ should be sorted descending(by date)", () => {
+        return request(app)
+            .get("/api/articles/")
+            .expect(200)
+            .then((response) => {
+                const { articles } = response.body;
+                const isSortedDescending = (arr, key) => {
+                    for (let i = 1; i < arr.length; i++) {
+                      if (arr[i - 1][key] < arr[i][key]) {return false}
+                    }
+                    return true;
+                  }
+                  expect(isSortedDescending(articles, "created_at")).toBe(true);
+            })
+    })
+
+    it("GET: 200 / articles should not have a body property", () => {
+        return request(app)
+            .get("/api/articles/")
+            .expect(200)
+            .then((response) => {
+                const { articles } = response.body;
+                articles.forEach((article) => {
+                    expect(article).not.toHaveProperty("body");
+                })
+            })
+    })
+
+
 })
+
