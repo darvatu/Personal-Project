@@ -6,7 +6,8 @@ exports.handleNoApiError =(req, res, next) => {
 
 exports.handleCustomErrors = (err, req, res, next) =>{
     if (err.msg === "not found the endpoints.json file" ||
-		err.msg === "requested article not available") {
+		err.msg === "requested article not available" ||
+		err.msg === "comment not found") {
         res.status(404).send({msg: "Not Found"})
     } else {
         next(err)
