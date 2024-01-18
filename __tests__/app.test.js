@@ -410,7 +410,7 @@ describe(" test BD for requests", () => {
             .then((response) => {
                 const { msg } = response.body;
                 expect(msg).toBe("Bad Request");
-            })
+            });
     });
 
 
