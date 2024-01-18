@@ -314,7 +314,7 @@ describe(" test BD for requests", () => {
     })
 
 
-    // 7-patch-api-articles-article_id
+    // 8-patch-api-articles-article_id
 
 
     it("PATCH/api/articles/1 return 200, votes increased by 1 at article_id=1 and tests the identifiers if remain the same at the end", () => {
@@ -411,7 +411,7 @@ describe(" test BD for requests", () => {
                 const { msg } = response.body;
                 expect(msg).toBe("Bad Request");
             })
-    })
+    });
 
 
 
