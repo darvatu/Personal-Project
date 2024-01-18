@@ -1,5 +1,12 @@
 const { forEach } = require("../data/test-data/articles.js");
-const { fetchAllTopics, fetchAllEndpoints, fetchArticleById, fetchAllArticles } = require("../model/model.js");
+const { fetchAllTopics, 
+        fetchAllEndpoints, 
+        fetchArticleById, 
+        fetchAllArticles,
+        fetchAllCommentsByArticleId,
+        updateArticleIdWithVotes,
+        insertCommentByArticleId } = require("../model/model.js");
+const {checkArticleExists}=require("../seeds/utils.js")
 
 exports.getAllTopics=(req, res, next) =>{
     fetchAllTopics()
@@ -41,4 +48,44 @@ exports.getAllArticles = (req, res, next) => {
     .catch((err) => {
         next(err)
     })
+}
+
+exports.getAllCommentsByArticleId=(req, res, next) => {
+	const { article_id } = req.params;
+    const checkIfArticle= checkArticleExists(article_id)
+    const commentsByArticle=fetchAllCommentsByArticleId(article_id)
+    Promise.all([commentsByArticle, checkIfArticle,])
+		    .then((response) => {
+                const comments=response[0]
+                res.status(200).send({ comments })
+            }) 
+               
+            .catch((err) => {
+		    	next(err);
+		    })
+    
+}
+
+exports.postCommentByArticleId= (req, res, next) => {
+	const { article_id } = req.params;
+	const newComment = req.body;
+   	insertCommentByArticleId(article_id, newComment)
+		.then((comment) => {
+			res.status(201).send({ comment });
+		})
+		.catch((err) => {
+			next(err);
+		})
+}
+
+exports.patchArticleIdWithVotes= (req, res, next) => {
+	const { article_id } = req.params;
+	const newVote = req.body.inc_votes;
+	updateArticleIdWithVotes(article_id, newVote)
+		.then((article) => {
+			return res.status(201).send({ article });
+		})
+		.catch((err) => {
+			next(err);
+		})
 }

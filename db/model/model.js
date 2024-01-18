@@ -19,6 +19,9 @@
             return JSON.parse(endpoints)
             })
         
+		.catch((err) => {
+			return Promise.reject({ msg: "not found the endpoints.json file"});
+		})
     }
 
     exports.fetchArticleById = (article_id) => {
@@ -60,9 +63,47 @@
             .then((results) => {
                  return results.rows;
             })
-            .catch((err) => {
-                console.error("Model error=>>>>>>>>>>>>>>>>>>>>>>:", err);
-                throw err; // Rethrow the error to be caught by the controller
-            });
 
+    }
+
+    exports.fetchAllCommentsByArticleId = (article_id) => {
+        return db
+            .query(`SELECT * FROM comments
+                    WHERE article_id = $1
+                    ORDER BY created_at DESC;`, [article_id])
+            .then((results) => {
+               return results.rows;
+            })
+
+    }
+
+    exports.insertCommentByArticleId= (article_id, newComment) => {
+        return db
+            .query(`
+                INSERT INTO comments (author, body, article_id)
+                VALUES ($1, $2, $3)
+                RETURNING *;`,[newComment.author, newComment.body, article_id])
+            .then((result) => {
+                return result.rows[0];
+            })
+   
+    }
+
+ 
+    exports.updateArticleIdWithVotes = (article_id, newVote) => {
+        return db
+            .query(`
+                UPDATE articles
+                SET votes = votes + $1
+                WHERE article_id = $2
+                RETURNING *;`, [newVote, article_id])
+            .then((results) => {
+                if (results.rows.length === 0) {
+                    return Promise.reject({
+                        msg: "requested article not available",
+                    });
+                } else {
+                    return results.rows[0];
+                }
+            })
     }
