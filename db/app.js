@@ -5,7 +5,8 @@ const  {getAllTopics,
         getAllArticles,
         getAllCommentsByArticleId,
         postCommentByArticleId,
-        patchArticleIdWithVotes} = require("./controllers/controller");
+        patchArticleIdWithVotes,
+        deleteCommentById} = require("./controllers/controller");
 
 const { handleNoApiError,
         handleCustomErrors, 
@@ -21,8 +22,12 @@ app.get("/api", getDescriptionAllEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getAllCommentsByArticleId);
+
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
 app.patch("/api/articles/:article_id", patchArticleIdWithVotes);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("/*", handleNoApiError)
 app.use(handleCustomErrors)

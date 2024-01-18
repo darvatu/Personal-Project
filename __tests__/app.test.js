@@ -413,10 +413,37 @@ describe(" test BD for requests", () => {
             });
     });
 
+   // 9-DELETE-api-comments-comment_id
 
+    it("DELETE/api/comments/1 returns 204, empty object as no content after deletes the specified comment_id", () => {
+        return request(app)
+            .delete("/api/comments/1")
+            .expect(204)
+            .then((response) => {
+                expect(response.body).toEqual({});
+            })
+    })
 
-
-
+    
+    it("DELETE/api/comments/111 returns 404, Not Found when there is no comment with that number", () => {
+        return request(app)
+        .delete("/api/comments/111")
+        .expect(404)
+        .then((response) => {
+            const { msg } = response.body;
+            expect(msg).toBe("Not Found");
+        })
+    })
+    
+    it("DELETE/api/comments/bla returns 400, Bad Request when not a number for the comment_id", () => {
+        return request(app)
+            .delete("/api/comments/bla")
+            .expect(400)
+            .then((response) => {
+                const { msg } = response.body;
+                expect(msg).toBe("Bad Request");
+            })
+    })
 
 
 
