@@ -445,7 +445,21 @@ describe(" test BD for requests", () => {
             })
     })
 
+//10-get-api-users
 
+    it("GET/api/users returns 200, array of users objects with the user properties", () => {
+        return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then((response) => {
+                const { users } = response.body;
+                users.forEach((user) => {
+                    expect(user).toHaveProperty("username");
+                    expect(user).toHaveProperty("name");
+                    expect(user).toHaveProperty("avatar_url");
+                })
+            })
+    })
 
 
 
