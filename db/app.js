@@ -6,7 +6,8 @@ const  {getAllTopics,
         getAllCommentsByArticleId,
         postCommentByArticleId,
         patchArticleIdWithVotes,
-        deleteCommentById} = require("./controllers/controller");
+        deleteCommentById,
+        getAllUsers} = require("./controllers/controller");
 
 const { handleNoApiError,
         handleCustomErrors, 
@@ -22,6 +23,7 @@ app.get("/api", getDescriptionAllEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getAllCommentsByArticleId);
+app.get("/api/users", getAllUsers);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
@@ -33,8 +35,6 @@ app.all("/*", handleNoApiError)
 app.use(handleCustomErrors)
 app.use(handleBadRequestError)
 app.use(handleInternalServerErrors)
-
-
 
 module.exports = app;
 

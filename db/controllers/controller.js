@@ -6,7 +6,8 @@ const { fetchAllTopics,
         fetchAllCommentsByArticleId,
         updateArticleIdWithVotes,
         insertCommentByArticleId,
-        deletingCommentById} = require("../model/model.js");
+        deletingCommentById,
+        fetchAllUsers} = require("../model/model.js");
 const {checkArticleExists}=require("../seeds/utils.js")
 
 exports.getAllTopics=(req, res, next) =>{
@@ -98,6 +99,16 @@ exports.deleteCommentById = (req, res, next) => {
             return res.status(204).send()
         })
 		.catch((err) =>{
+            return next(err)
+        })
+}
+
+exports.getAllUsers=(req, res) => {
+	fetchAllUsers()
+        .then((users) => {
+		return res.status(200).send({ users });
+	    })
+        .catch((err) =>{
             return next(err)
         })
 };
