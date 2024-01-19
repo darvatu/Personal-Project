@@ -120,6 +120,7 @@ describe(" test BD for requests", () => {
             .expect(200)
             .then((response) => {
                 const { articles } = response.body;
+                expect(articles.length).toBe(13);
                 articles.forEach((article) => {
                     expect(article).toHaveProperty("comment_count");
                     if (article.article_id === 1) {expect(article.comment_count).toBe("11")}
@@ -151,6 +152,7 @@ describe(" test BD for requests", () => {
             .expect(200)
             .then((response) => {
                 const { articles } = response.body;
+                expect(articles.length).toBe(13);
                 articles.forEach((article) => {
                     expect(article).not.toHaveProperty("body");
                 })
@@ -165,7 +167,9 @@ describe(" test BD for requests", () => {
                 .expect(200)
                 .then((response) => {
                     const {comments} = response.body;
+                    expect(comments.length).toBe(11);
                     comments.forEach((comment) => {
+                        expect(comment).toHaveProperty("article_id", 1);
                         expect(comment).toHaveProperty("comment_id", expect.any(Number));
                         expect(comment).toHaveProperty("body", expect.any(String));
                         expect(comment).toHaveProperty("votes", expect.any(Number));

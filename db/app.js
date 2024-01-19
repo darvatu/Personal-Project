@@ -9,7 +9,7 @@ const  {getAllTopics,
         deleteCommentById,
         getAllUsers} = require("./controllers/controller");
 
-const { handleNoApiError,
+const { handlePSQLErrors,
         handleCustomErrors, 
         handleBadRequestError, 
         handleInternalServerErrors} = require("../errors/index");
@@ -72,7 +72,7 @@ app.patch("/api/articles/:article_id", patchArticleIdWithVotes);
 // "DELETE/api/comments/bla returns 400, Bad Request when not a number for the comment_id"
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
-app.all("/*", handleNoApiError)
+app.all("/*", handlePSQLErrors)
 app.use(handleCustomErrors)
 app.use(handleBadRequestError)
 app.use(handleInternalServerErrors)

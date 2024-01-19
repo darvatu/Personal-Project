@@ -1,4 +1,4 @@
-exports.handleNoApiError =(req, res, next) => {
+exports.handlePSQLErrors =(req, res, next) => {
 	res.status(404).send({
 		msg: `Route not found. ${req.originalUrl} is not a valid endpoint as doesn't contain /api` })
 }
