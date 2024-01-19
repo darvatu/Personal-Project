@@ -113,6 +113,21 @@ describe(" test BD for requests", () => {
                 })
             })
     })
+
+    it("GET/api/articles/article_id will respond with 200 and with articles and should include the comment count ", () => {
+        return request(app)
+            .get("/api/articles/")
+            .expect(200)
+            .then((response) => {
+                const { articles } = response.body;
+                expect(articles.length).toBe(13);
+                articles.forEach((article) => {
+                    expect(article).toHaveProperty("comment_count");
+                    if (article.article_id === 1) {expect(article.comment_count).toBe("11")}
+                    if (article.article_id === 9) {expect(article.comment_count).toBe("2")}
+                    })
+            })
+    })
   
     it("GET/api/articles/ will respond with 200 and with articles sorted descending(by date)", () => {
         return request(app)
@@ -505,22 +520,18 @@ describe(" test BD for requests", () => {
 
     // 12-get-api-articles-article_id
 
-    it("GET/api/articles/ will respond with 200 and with articles and should include the comment count ", () => {
+
+
+
+    it("GET/api/articles/article_id will respond with 200 and with an article and should include the comment count ", () => {
         return request(app)
-            .get("/api/articles/")
+            .get("/api/articles/1")
             .expect(200)
             .then((response) => {
-                const { articles } = response.body;
-                expect(articles.length).toBe(13);
-                articles.forEach((article) => {
-                    expect(article).toHaveProperty("comment_count");
-                    if (article.article_id === 1) {expect(article.comment_count).toBe("11")}
-                    if (article.article_id === 9) {expect(article.comment_count).toBe("2")}
-                    })
+                const { article } = response.body;
+                expect(article.comment_count).toBe("11")
             })
     })
-
-
   
     
 })
