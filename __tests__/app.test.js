@@ -520,9 +520,6 @@ describe(" test BD for requests", () => {
 
     // 12-get-api-articles-article_id
 
-
-
-
     it("GET/api/articles/article_id will respond with 200 and with an article and should include the comment count ", () => {
         return request(app)
             .get("/api/articles/1")
@@ -533,5 +530,6 @@ describe(" test BD for requests", () => {
             })
     })
   
-    
+    //13-host-application
+  
 })
