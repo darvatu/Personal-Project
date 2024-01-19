@@ -27,8 +27,13 @@ const { checkIfTopic } = require("../seeds/utils.js");
 
     exports.fetchArticleById = (article_id) => {
         return db
-            .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
-            .then((results) => {
+            .query(`SELECT articles.*, COUNT(comments.comment_id) AS comment_count 
+                    FROM articles 
+                    LEFT OUTER JOIN comments ON comments.article_id = articles.article_id
+                    WHERE articles.article_id = $1
+                    GROUP BY articles.article_id;`,[article_id])  
+            
+                .then((results) => {
                 if (results.rows.length === 0) {
                     return Promise.reject({
                         status: 404,
