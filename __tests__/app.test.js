@@ -14,21 +14,22 @@ afterAll(()=>{
 
 describe(" test BD for requests", () => {
     
-    it("if returns an array of topic objects with 2 keys of description and slug when called with GET /api/topics", () => {
+    it("GET/api/topics returns an array of topic objects with 2 keys of description and slug", () => {
         return request(app)
       .get("/api/topics")
       .then((response) => {
+        expect(response.body.length).toBe(3);
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body)).toBe(true);
         expect(response.body.length).toBeGreaterThan(0)
         response.body.forEach((topic)=>{
-        expect(topic).toHaveProperty("description");
-        expect(topic).toHaveProperty("slug");
+        expect(topic).toHaveProperty("description",expect.any(String));
+        expect(topic).toHaveProperty("slug",expect.any(String));
         })
       })
     })
 
-    it("if called with any other route excepting '/api/topics', '/api/articles', '/api', '/api/users', '/api/comments' to have the return code 404 and message Route not found ", ()=>{
+    it("GET/api/blabla if called with any other route excepting '/api/topics', '/api/articles', '/api', '/api/users', '/api/comments' to have the return code 404 and message Route not found ", ()=>{
         return request(app)
         .get("/api/blabla")
         .expect(404)
@@ -37,19 +38,22 @@ describe(" test BD for requests", () => {
         })
      })
 
-    it("returns all endpoints when called with /api",()=>{
+    it("GET/api returns all endpoints ",()=>{
         return request(app)
         .get("/api")
         .expect(200)
         .then((response) => {
-            expect(typeof response).toBe("object");
+            expect(typeof response.body).toBe("object");
             expect(response.body).toEqual(endpoints);
+            for (const endpoint in response.body) {
+                expect(response.body[endpoint]).toHaveProperty("description");
+            }
         })
     })
 
     //4-get-api-articles-article_id
 
-    it("test to return an article as an object and specific properties", () => {
+    it("GET/api/articles/1 to return an article as an object and specific properties", () => {
         const expectedObject = {
             title: "Living in the shadow of a great man",
             topic: "mitch",
@@ -70,7 +74,7 @@ describe(" test BD for requests", () => {
             })
     })
 
-    it("400 error for no article id", () => {
+    it("GET/api/articles/bla return 400 error for no article id", () => {
         return request(app)
           .get("/api/articles/bla")
           .expect(400)
@@ -79,7 +83,7 @@ describe(" test BD for requests", () => {
             })
       })
 
-    it("404 error message when passed valid article_id but not found", () => {
+    it("GET/api/articles/111 return 404 error message when passed valid article_id but not found", () => {
         return request(app)
           .get("/api/articles/111")
           .expect(404)
@@ -90,51 +94,40 @@ describe(" test BD for requests", () => {
 
     // 5-get-api-all-articles
     
-    it("GET/api/articles/: will receive 200 and an array of article objects with the defined properties", () => {
+    it("GET/api/articles/ will receive 200 and an array of article objects with the defined properties", () => {
         return request(app)
             .get("/api/articles/")
             .expect(200)
             .then((response) => {
                 const { articles } = response.body;
+                expect(articles.length).toBe(13);
+                expect(Array.isArray(articles)).toBe(true);
                 articles.forEach((article) => {
-                    expect(article).toHaveProperty("author");
-                    expect(article).toHaveProperty("title",);
-                    expect(article).toHaveProperty("article_id");
-                    expect(article).toHaveProperty("topic");
-                    expect(article).toHaveProperty("created_at");
-                    expect(article).toHaveProperty("votes");
-                    expect(article).toHaveProperty("article_img_url");
+                    expect(article).toHaveProperty("author",expect.any(String));
+                    expect(article).toHaveProperty("title",expect.any(String));
+                    expect(article).toHaveProperty("article_id",expect.any(Number));
+                    expect(article).toHaveProperty("topic",expect.any(String));
+                    expect(article).toHaveProperty("created_at",expect.any(String));
+                    expect(article).toHaveProperty("votes",expect.any(Number));
+                    expect(article).toHaveProperty("article_img_url",expect.any(String));
                 })
             })
     })
   
-    it("GET/api/articles/ will respond with 200 and with articles and should include the comment count ", () => {
-        return request(app)
-            .get("/api/articles/")
-            .expect(200)
-            .then((response) => {
-                const { articles } = response.body;
-                articles.forEach((article) => {
-                    expect(article).toHaveProperty("comment_count");
-                    if (article.article_id === 1) {expect(article.comment_count).toBe("11")}
-                    if (article.article_id === 9) {expect(article.comment_count).toBe("2")}
-                    })
-            })
-    })
-
     it("GET/api/articles/ will respond with 200 and with articles sorted descending(by date)", () => {
         return request(app)
             .get("/api/articles/")
             .expect(200)
             .then((response) => {
                 const { articles } = response.body;
-                const isSortedDescending = (arr, key) => {
-                    for (let i = 1; i < arr.length; i++) {
-                      if (arr[i - 1][key] < arr[i][key]) {return false}
-                    }
-                    return true;
-                  }
-                  expect(isSortedDescending(articles, "created_at")).toBe(true);
+                expect(articles).toBeSortedBy("created_at", {descending: true});
+                // const isSortedDescending = (arr, key) => {
+                //     for (let i = 1; i < arr.length; i++) {
+                //       if (arr[i - 1][key] < arr[i][key]) {return false}
+                //     }
+                //     return true;
+                //   }
+                //   expect(isSortedDescending(articles, "created_at")).toBe(true);
             })
     })
 
@@ -144,6 +137,7 @@ describe(" test BD for requests", () => {
             .expect(200)
             .then((response) => {
                 const { articles } = response.body;
+                expect(articles.length).toBe(13);
                 articles.forEach((article) => {
                     expect(article).not.toHaveProperty("body");
                 })
@@ -158,13 +152,15 @@ describe(" test BD for requests", () => {
                 .expect(200)
                 .then((response) => {
                     const {comments} = response.body;
+                    expect(comments.length).toBe(11);
                     comments.forEach((comment) => {
-                        expect(comment).toHaveProperty("comment_id");
-                        expect(comment).toHaveProperty("body");
-                        expect(comment).toHaveProperty("votes");
-                        expect(comment).toHaveProperty("author");
-                        expect(comment).toHaveProperty("article_id");
-                        expect(comment).toHaveProperty("created_at");
+                        expect(comment).toHaveProperty("article_id", 1);
+                        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+                        expect(comment).toHaveProperty("body", expect.any(String));
+                        expect(comment).toHaveProperty("votes", expect.any(Number));
+                        expect(comment).toHaveProperty("author", expect.any(String));
+                        expect(comment).toHaveProperty("article_id", expect.any(Number));
+                        expect(comment).toHaveProperty("created_at", expect.any(String));
                     })
                 })
         })
@@ -225,8 +221,8 @@ describe(" test BD for requests", () => {
                 expect(comment.author).toBe("butter_bridge");
                 expect(comment.body).toBe("Any good news if Trumps wins?");
                 expect(comment.votes).toBe(0);
-                expect(comment).toHaveProperty("article_id");
-                expect(comment).toHaveProperty("created_at");
+                expect(comment).toHaveProperty("article_id",expect.any(Number));
+                expect(comment).toHaveProperty("created_at",expect.any(String));
             })
     })
 
@@ -260,7 +256,7 @@ describe(" test BD for requests", () => {
             })
     })
 
-    it("POST/api/articles/1/comments should return 404, Not Found if invalid author ", () => {
+    it("POST/api/articles/1/comments should return 404, Not Found if invalid author bla ", () => {
         const newComment = {
             author: "bla",
             body: "Any good news if Trumps wins?"
@@ -303,7 +299,7 @@ describe(" test BD for requests", () => {
             })
     })
 
-    it("POST/api/articles/1/comments return 400, should return Bad Request when missing comment_body", () => {
+    it("POST/api/articles/1/comments return 400, should return Bad Request when missing comment completely to be send", () => {
         return request(app)
             .post("/api/articles/1/comments")
             .expect(400)
@@ -453,35 +449,78 @@ describe(" test BD for requests", () => {
             .expect(200)
             .then((response) => {
                 const { users } = response.body;
+                expect(users.length).toBe(4);
                 users.forEach((user) => {
-                    expect(user).toHaveProperty("username");
-                    expect(user).toHaveProperty("name");
-                    expect(user).toHaveProperty("avatar_url");
+                    expect(user).toHaveProperty("username",expect.any(String));
+                    expect(user).toHaveProperty("name",expect.any(String));
+                    expect(user).toHaveProperty("avatar_url",expect.any(String));
                 })
             })
     })
 
+    // 11-get-api-articles-topic_query
+
+    it("GET/api/articles?topic=mitch return 200, 12 articles in an array with topic: mitch", () => {
+        return request(app)
+            .get("/api/articles?topic=mitch")
+            .expect(200)
+            .then((response) => {
+                const { articles } = response.body;
+                expect(articles.length).toBe(12);
+                articles.forEach((article) => {
+                    expect(article.topic).toBe("mitch");
+                });
+            })
+    })
+
+    it("GET/api/articles?topic=paper returns 200, empty array for a topic with no articles", () => {
+        return request(app)
+            .get("/api/articles?topic=paper")
+            .expect(200)
+            .then((response) => {
+                const { articles } = response.body;
+                expect(articles.length).toBe(0);
+            })
+    })
+
+    it("GET/api/articles?bla=mitch returns 200, all the articles as needs to ignore the invalid query", () => {
+        return request(app)
+            .get("/api/articles?bla=mitch")
+            .expect(200)
+            .then((response) => {
+                const { articles } = response.body;
+                expect(articles.length).toBe(13);
+            })
+    })
+
+    it("GET/api/articles?topic=bla returns 404 , Not Found as there is not such topic bla", () => {
+        return request(app)
+            .get("/api/articles?topic=bla")
+            .expect(404)
+            .then((response) => {
+                const { msg } = response.body;
+                expect(msg).toBe("Not Found");
+            })
+    })
+
+    // 12-get-api-articles-article_id
+
+    it("GET/api/articles/ will respond with 200 and with articles and should include the comment count ", () => {
+        return request(app)
+            .get("/api/articles/")
+            .expect(200)
+            .then((response) => {
+                const { articles } = response.body;
+                expect(articles.length).toBe(13);
+                articles.forEach((article) => {
+                    expect(article).toHaveProperty("comment_count");
+                    if (article.article_id === 1) {expect(article.comment_count).toBe("11")}
+                    if (article.article_id === 9) {expect(article.comment_count).toBe("2")}
+                    })
+            })
+    })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
+    
 })
-

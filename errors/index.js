@@ -1,4 +1,4 @@
-exports.handleNoApiError =(req, res, next) => {
+exports.handlePSQLErrors =(req, res, next) => {
 	res.status(404).send({
 		msg: `Route not found. ${req.originalUrl} is not a valid endpoint as doesn't contain /api` })
 }
@@ -7,7 +7,9 @@ exports.handleNoApiError =(req, res, next) => {
 exports.handleCustomErrors = (err, req, res, next) =>{
     if (err.msg === "not found the endpoints.json file" ||
 		err.msg === "requested article not available" ||
-		err.msg === "comment not found") {
+		err.msg === "comment not found" ||
+		err.msg === "requested topic does not exist" ||
+		err.msg === "no articles for that topic") {
         res.status(404).send({msg: "Not Found"})
     } else {
         next(err)

@@ -1,5 +1,6 @@
     const db = require("../connection.js");
-    const fs = require("fs/promises")
+    const fs = require("fs/promises");
+const { checkIfTopic } = require("../seeds/utils.js");
     
   
     exports.fetchAllTopics = () =>{
@@ -39,9 +40,8 @@
             })
     }
 
-    exports.fetchAllArticles = () => {
-        return db
-            .query(`SELECT
+    exports.fetchAllArticles = (topic) => {
+        let query = `SELECT
                         articles.article_id,
                         articles.title,
                         articles.topic,
@@ -53,18 +53,38 @@
                     FROM
                         articles
                     LEFT JOIN
-                        comments ON comments.article_id = articles.article_id
-                    GROUP BY
-                        articles.article_id
-                    ORDER BY
-                        articles.created_at DESC;`
-                    )
+                        comments ON comments.article_id = articles.article_id`;
+    
+        const queryParams = [];
+    
+        if (topic) {
+            query += ` WHERE articles.topic = $1`;
+            queryParams.push(topic);
+        }
+    
+        query += ` GROUP BY
+                    articles.article_id
+                ORDER BY
+                    articles.created_at DESC;`;
+    
+        return db
+            .query(query, queryParams)
             .then((results) => {
-                 return results.rows;
+                if (topic) {
+                    if (results.rows.length === 0) {
+                        return checkIfTopic(topic)
+                        .then (()=>{return []})
+                        }
+                    return results.rows;
+                }
+
+                if (results.rows.length === 0) {
+                    return Promise.reject({ msg: "requested article not available" });
+                }
+                return results.rows;
             })
-
     }
-
+    
     exports.fetchAllCommentsByArticleId = (article_id) => {
         return db
             .query(`SELECT * FROM comments
@@ -87,7 +107,6 @@
    
     }
 
- 
     exports.updateArticleIdWithVotes = (article_id, newVote) => {
         return db
             .query(`UPDATE articles
@@ -122,3 +141,5 @@
             return results.rows;
         })
     }
+
+  

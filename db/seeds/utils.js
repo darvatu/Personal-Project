@@ -36,3 +36,17 @@ exports.checkArticleExists = (article_id) => {
         }
       })
 }
+
+exports.checkIfTopic=(topic) => {
+	return db
+		.query(`SELECT * FROM topics
+			      WHERE slug = $1`,[topic])
+		.then((results) => {
+			if (results.rows.length === 0) {
+				return Promise.reject({
+					msg: "requested topic does not exist",
+				});
+			}
+		});
+};
+
