@@ -7,12 +7,12 @@ const  {getAllTopics,
         postCommentByArticleId,
         patchArticleIdWithVotes,
         deleteCommentById,
-        getAllUsers} = require("./controllers/controller");
+        getAllUsers} = require("./db/controllers/controller");
 
 const { handlePSQLErrors,
         handleCustomErrors, 
         handleBadRequestError, 
-        handleInternalServerErrors} = require("../errors/index");
+        handleInternalServerErrors} = require("./errors/index");
 
 
 const app = express();
