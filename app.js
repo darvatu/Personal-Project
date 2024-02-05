@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors');
 const  {getAllTopics, 
         getDescriptionAllEndpoints, 
         getArticleById, 
@@ -17,7 +18,7 @@ const { handlePSQLErrors,
 
 const app = express();
 app.use(express.json());
-
+app.use(cors());
 //"GET/api/topics returns an array of topic objects with 2 keys of description and slug"
 //"GET/api/blabla if called with any other route excepting '/api/topics', '/api/articles', '/api', '/api/users', '/api/comments' to have the return code 404 and message Route not found "
 app.get("/api/topics", getAllTopics); 
