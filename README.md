@@ -1,154 +1,101 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
 
-You will need to create two .env files for your project: .env.test and .env.development. Into each, add PGDATABASE=, with the correct database name for that environment (nc_news_test and nc_news). Double check that these .env files are .gitignored.
+BE-NC-News
+
+Welcome to the BE-NC-News repository! This repository contains the back-end codebase for NC News, a news aggregation and discussion platform. This readme file serves as a guide to help you understand the structure of the project and how to get started.
+
+Getting Started
+
+To get started with this project, follow these instructions:
+
+Prerequisites
+
+    Node.js and npm installed on your machine
+    PostgreSQL installed and running locally
+
+Installation
+
+    Clone this repository to your local machine:
+    git clone https://github.com/your-username/your-repo.git
+    Navigate to the project directory:
+    cd your-repo
+    Install the dependencies:
+    npm install
+    Set up your local PostgreSQL database and configure the connection string in the db/connection.js file.
+    Seed the database with initial data:
+    npm run seed
+
+Usage
+
+    Start the server:
+    npm start
+    This command will start the server, and it will be accessible at http://localhost:3000.
 
 
-Project Setup--------------------------------------------------------------
-Making a public repo
-Ensure that you have cloned down the repo first.
+Access the API endpoints using a REST client or integrate them into your front-end application.
+Available Endpoints
 
-You will need to make your own public repo so that you can share this project as part of your portfolio by doing the following:
+    GET /api: Returns information about all available endpoints.
+    GET /api/topics: Get all available topics.
+    GET /api/articles: Get all articles. Optionally filter by topic.
+    GET /api/articles/:article_id: Get an article by its ID.
+    PATCH /api/articles/:article_id: Update an article's vote count by ID.
+    GET /api/articles/:article_id/comments: Get all comments for a specific article.
+    POST /api/articles/:article_id/comments: Add a new comment to an article.
+    GET /api/comments: Get all comments.
+    PATCH /api/comments/:comment_id: Update a comment's vote count by ID.
+    DELETE /api/comments/:comment_id: Delete a comment by ID.
+    GET /api/users: Get all users.
 
-Create a new public GitHub repository. Do not initialise the project with a readme, .gitignore or license.
+Testing
+This project uses Jest and Supertest for testing. To run the tests, use the following command:
+npm test
 
-From your cloned local version of this project you'll want to push your code to your new repository using the following commands:
+Error Handling
+The API handles various types of errors:
+    PSQL errors.
+    Custom errors.
+    Bad requests.
+    Internal server errors.
 
-git remote set-url origin YOUR_NEW_REPO_URL_HERE
-git branch -M main
-git push -u origin main
-Creating the databases
-We'll have two databases in this project: one for real-looking dev data, and another for simpler test data.
+Dependencies
+The project relies on the following dependencies:
 
-You will need to create two .env files for your project: .env.test and .env.development. Into each, add PGDATABASE=, with the correct database name for that environment (see /db/setup.sql for the database names). Double check that these .env files are .gitignored.
+    Express: Web application framework for Node.js.
+    Cors: Middleware for enabling Cross-Origin Resource Sharing.
+    Dotenv: Loads environment variables from a .env file.
+    pg: PostgreSQL client for Node.js.
+    Supertest: HTTP assertion library.
+    Jest: Testing framework.
+    Jest-extended: Additional matchers for Jest.
+    Jest-sorted: Sorting matchers for Jest.
+    pg-format: PostgreSQL data formatting library.
+    Husky: Git hooks manager.
 
-You'll need to run npm install at this point.
+Scripts
 
-Please do not install specific packages as you can do this down the line when you need them.
+    setup-dbs: Sets up the necessary databases by running the setup.sql script.
+    seed: Seeds the database with initial data.
+    test: Runs the Jest test suite.
+    start: Starts the server.
+    seed-prod: Seeds the production database environment.
+
+Additional Files
+
+    index.js: Contains functions for handling various types of errors and exporting them for use in the application.
+    setup.sql: SQL script for setting up the necessary databases.
+    connection.js: Module for establishing a connection to the PostgreSQL database.
+    utils.js: Utility functions for converting timestamps, formatting comments, and checking article and topic existence in the database.
+    seed.js: Script for seeding the database with initial data.
+    run-seed.js: Executes the seed script with development data and ends the database connection afterward.
+    model.js: Database queries module containing functions to interact with the database tables and fetch data.
+
+Additional Test Files
+
+utils.test.js: Contains unit tests for utility functions used in the application.
 
 
-You have also been provided with a db folder with some data, a setup.sql file and a seeds folder.
+Acknowledgements
+Special thanks to Northcoders Team.
 
-Please take some to familiarise yourself with the project structure. The seed function has been written for you, but you should take a look at the table creations to see the structure of the database you'll be working with. You should also take a minute to familiarise yourself with the npm scripts you have been provided.
-
-The job of index.js in each of the data folders is to export out all the data from that folder, currently stored in separate files. This is so that, when you need access to the data elsewhere, you can write one convenient require statement to the index file, rather than having to require each file individually. Think of it like the index of a book - a place to refer to! Make sure the index file exports an object with values of the data from that folder with the keys:
-
-topicData
-articleData
-userData
-commentData
-Update the readme
-As .env.* is added to the .gitignore, anyone who wishes to clone your repo will not have access to the necessary environment variables. Update your readme to explain what files a developer must add in order to successfully connect to the two databases locally.
-
-Edit the README.md to remove the link to the initial instructions. Replace this with instructions on how to create the environment variables for anyone who wishes to clone your project and run it locally.
-
----------------------------------------------------------------------------------------------
-CORE: GET /api/topics
-Before you begin, don't forget to branch!
-
-Description
-Should:
-
-be available on endpoint /api/topics.
-get all topics.
-Responds with:
-
-an array of topic objects, each of which should have the following properties:
-slug
-description
-As this is the first endpoint, you will need to set up your testing suite.
-
-Consider what errors could occur with this endpoint. As this is your first endpoint you may wish to also consider any general errors that could occur when making any type of request to your api. The errors that you identify should be fully tested for.
-
-Note: although you may consider handling a 500 error in your app, we would not expect you to explicitly test for this.
-
-----------------------------------------------------------------------------
-CORE: GET /api
-Description
-Should:
-
-be available on /api.
-provide a description of all other endpoints available.
-Responds with:
-
-An object describing all the available endpoints on your API
-You can find an (incomplete) example of this response in the endpoints.json file which should be built upon as more features are added to your app. Hint - this file is not just a guide for what your response should look like, but can actually be used when implementing the endpoint.
-
-This /api endpoint will effectively act as documentation detailing all the available endpoints and how they should be interacted with.
-
-Each endpoint should include:
-
-a brief description of the purpose and functionality of the endpoint.
-which queries are accepted.
-what format the request body needs to adhere to.
-what an example response looks like.
-You will be expected to test for this endpoint responding with an accurate JSON object. You will also be expected to update this JSON object for every endpoint you complete. This will be very helpful to your future self when it comes to using your API in the Front End block of the course! Note: how might you make this test dynamic so that it doesn't need to be updated whenever new endpoint info is added to the JSON object?
-
-----------------------------------------------------------------------------------------------
-CORE: GET /api/articles/:article_id
-Description
-Should:
-
-be available on /api/articles/:article_id.
-get an article by its id.
-Responds with:
-
-an article object, which should have the following properties:
-author
-title
-article_id
-body
-topic
-created_at
-votes
-article_img_url
-Consider what errors could occur with this endpoint, and make sure to test for them.
-
-Remember to add a description of this endpoint to your /api endpoint.
---------------------------------------------------------------------------------------
-CORE: GET /api/articles
-Description
-Should:
-
-be available on /api/articles.
-get all articles.
-Responds with:
-
-an articles array of article objects, each of which should have the following properties:
-author
-title
-article_id
-topic
-created_at
-votes
-article_img_url
-comment_count, which is the total count of all the comments with this article_id. You should make use of queries to the database in order to achieve this.
-In addition:
-
-the articles should be sorted by date in descending order.
-there should not be a body property present on any of the article objects.
-Consider what errors could occur with this endpoint, and make sure to test for them.
-
-Remember to add a description of this endpoint to your /api endpoint.
--------------------------------------------------------------------------------
-CORE: GET /api/articles/:article_id/comments
-Description
-Should:
-
-be available on /api/articles/:article_id/comments.
-get all comments for an article.
-Responds with:
-
-an array of comments for the given article_id of which each comment should have the following properties:
-comment_id
-votes
-created_at
-author
-body
-article_id
-Comments should be served with the most recent comments first.
-
-Consider what errors could occur with this endpoint, and make sure to test for them.
-
-Remember to add a description of this endpoint to your /api endpoint.
